@@ -1,0 +1,89 @@
+
+services:
+  paperless-redis:
+    image: redis
+    container_name: paperless-redis-demo-1
+    restart: always
+    networks:
+      default:
+        ipv4_address: 192.168.200.33
+    volumes:
+      - /volume1/Documents/paperless/redis:/usr/local/etc/redis
+
+  paperless-db:
+    image: docker.io/library/postgres:16
+    container_name: paperless-postgres-demo-1
+    restart: always
+    volumes:
+      - /volume1/Documents/paperless/pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: paperless
+      POSTGRES_USER: paperless
+      POSTGRES_PASSWORD: paperless
+    networks:
+      default:
+        ipv4_address: 192.168.200.34
+
+  webserver:
+    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    container_name: paperlessngx-demo-1
+    restart: always
+    depends_on:
+      - paperless-db
+      - paperless-redis
+      - gotenberg
+      - tika
+    ports:
+      - 8000:8000
+    volumes:
+      - /volume1/Documents/paperless/data:/usr/src/paperless/data
+      - /volume1/Documents/paperless/media:/usr/src/paperless/media
+      - /volume1/Documents/paperless/export:/usr/src/paperless/export
+      - /volume1/Documents/paperless/consume:/usr/src/paperless/consume
+    env_file: stack.env
+    environment:
+      PAPERLESS_REDIS: redis://192.168.200.33:6379
+      PUID: 1026
+      PGID: 100
+      PAPERLESS_DBHOST: paperless-db
+      # PAPERLESS_ADMIN_USER: admin
+      # PAPERLESS_ADMIN_PASSWORD: GEHEIM
+      PAPERLESS_TIKA_ENABLED: 1
+      PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://192.168.200.36:3000
+      PAPERLESS_TIKA_ENDPOINT: http://192.168.200.37:9998
+      # Zusätzliche Umgebungsvariablen ab hier:
+      PAPERLESS_WORKER_TIMEOUT: 4000
+    networks:
+      default:
+        ipv4_address: 192.168.200.35
+
+  gotenberg:
+    image: gotenberg/gotenberg
+    restart: always
+    container_name: gotenberg-demo-1
+    ports:
+      - 3000:3000
+    networks:
+      default:
+        ipv4_address: 192.168.200.36
+    command:
+      - "gotenberg"
+      - "--chromium-disable-javascript=true"
+      - "--chromium-allow-list=file:///tmp/.*"
+      - "--uno-listener-start-timeout=120s"
+      - "--api-timeout=600s"
+
+  tika:
+    image: ghcr.io/paperless-ngx/tika
+    container_name: tika-demo-1
+    ports:
+      - 9998:9998
+    networks:
+      default:
+        ipv4_address: 192.168.200.37
+    restart: always
+
+networks:
+  default:
+    name: mvl-200
+    external: true
