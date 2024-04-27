@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+  hbbs:
+    container_name: hbbs
+    ports:
+      - 21115:21115
+      - 21116:21116
+      - 21116:21116/udp
+      - 21118:21118
+    image: rustdesk/rustdesk-server
+    command: hbbs -r rust.navigio.synology.me:21117 -k _
+    environment:
+      PUID: 1026
+      PGID: 100
+    volumes:
+      - /volume3/docker/rustdesk/hbbs:/root
+    networks:
+      - rustdesk-net
+    depends_on:
+      - hbbr
+    restart: unless-stopped
+
+  hbbr:
+    container_name: hbbr
+    ports:
+      - 21117:21117
+      - 21119:21119
+    image: rustdesk/rustdesk-server
+    command: hbbr -k _
+    environment:
+      PUID: 1026
+      PGID: 100
+    volumes:
+      - /volume3/docker/rustdesk/hbbr:/root
+    networks:
+      - rustdesk-net
+    restart: unless-stopped
+
+networks:
+  rustdesk-net:
+    external: false
