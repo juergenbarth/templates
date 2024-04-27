@@ -1,0 +1,55 @@
+version: '3.0'
+
+services:
+
+  frontend:
+    image: "grocy/frontend:v3.3.2"
+    container_name: grocy-front
+    build:
+      args:
+        GROCY_VERSION: v3.3.2
+        PLATFORM: linux/amd64
+      context: .
+      dockerfile: Containerfile-frontend
+    depends_on:
+      - backend
+    ports:
+      - "80:8080"
+    read_only: true
+    tmpfs:
+      - /tmp
+    restart: unless-stopped
+    networks:
+            default:
+                ipv4_address: 192.168.1.40
+
+  backend:
+    image: "grocy/backend:v3.3.2"
+    container_name: grocy-back
+    build:
+      args:
+        GROCY_VERSION: v3.3.2
+        PLATFORM: linux/amd64
+      context: .
+      dockerfile: Containerfile-backend
+    expose:
+      - '9000'
+    read_only: true
+    tmpfs:
+      - /tmp
+    volumes:
+      - app-db:/var/www/data
+    env_file:
+      - stack.env
+    restart: unless-stopped
+    networks:
+            default:
+                ipv4_address: 192.168.1.41
+
+networks:
+    default:
+        name: mvl
+        external: true
+
+volumes:
+  app-db:
