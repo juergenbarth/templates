@@ -1,0 +1,45 @@
+version: "3.9"
+services:
+  db:
+    image: postgres
+    container_name: Calcom-demo-DB
+    hostname: calcom-db
+    user: 1026:100
+    healthcheck: # https://github.com/peter-evans/docker-compose-healthcheck
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - /volume1/docker/calcom-demo:/var/lib/postgresql/data
+    env_file:
+      - stack.env
+    restart: on-failure:5
+    networks:
+      default:
+        ipv4_address: 192.168.1.42
+
+  calcom:
+    image: calcom/cal.com:latest
+    container_name: Calcom-demo
+    hostname: calcom
+    healthcheck:
+      test: curl -sf http://localhost:3000 || exit 1
+    ports:
+      - 3000:3000
+    env_file:
+      - stack .env
+    restart: on-failure:5
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      default:
+        ipv4_address: 192.168.1.43
+    dns:
+      - 192.168.1.62
+
+networks:
+  default:
+    name: mvl
+    external: true
