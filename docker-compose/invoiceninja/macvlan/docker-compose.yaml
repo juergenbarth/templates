@@ -1,0 +1,118 @@
+version: '3.7'
+
+services:
+
+  in-server:
+    image: nginx
+    restart: unless-stopped
+    volumes:
+      # Wichtig! Hier die in-vhost.conf einbinden.
+      # Important! Include in-vhost.conf here.
+      - /volume3/docker/invoiceninja-demo/config/in-vhost.conf:/etc/nginx/conf.d/in-vhost.conf:ro
+      # Hier das Public-Verzeichnis von invoice ninja einbinden.
+      # Include the public folder for invoice ninja here.
+      - /volume3/docker/invoiceninja-demo/public:/var/www/app/public:ro
+    depends_on:
+      - in-app
+    # Run webserver nginx on port 80
+    # ports:
+    #   - "80:80"
+    healthcheck:
+      test: curl -f http://localhost:80/ || exit 1
+    networks:
+      default:
+        ipv4_address: 192.168.200.27
+
+  in-db:
+    image: mariadb:10.4
+    restart: unless-stopped
+    volumes:
+      - /volume3/docker/invoiceninja-demo/data:/var/lib/mysql:rw,delegated
+    environment:
+      # Passwort anpassen!! Änderungen müssen unten auch angepasst werden.
+      # Adjust passwords!! Don't forget to adjust them further down accordingly.
+      MARIADB_PASSWORD: ninja
+      MARIADB_ROOT_PASSWORD: ninja
+      MARIADB_DATABASE: ninja
+      MARIADB_USER: ninja
+      PUID: 1026
+      PGID: 100
+    networks:
+      default:
+        ipv4_address: 192.168.200.29
+
+  in-cache:
+    image: redis
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping || exit 1"]
+    networks:
+      default:
+        ipv4_address: 192.168.200.30
+    
+  in-app:
+    image: invoiceninja/invoiceninja:5
+    restart: unless-stopped
+    volumes:
+      - /volume3/docker/invoiceninja-demo/public:/var/www/app/public:rw,delegated
+      - /volume3/docker/invoiceninja-demo/storage:/var/www/app/storage:rw,delegated
+    depends_on:
+      in-db:
+        condition: service_started
+      in-cache:
+        condition: service_healthy
+    environment:
+      APP_NAME: "Invoice Ninja"
+      APP_ENV: production
+      # Hier den erstellten Key einfügen.
+      # Insert the generated key here.
+      # docker run --rm -it invoiceninja/invoiceninja php artisan key:generate --show
+      APP_KEY: base64:NfHondCeqEEGkI4I5ILpMOWsS3fuE5+leVlQ3jtGPzw=
+      APP_DEBUG: 0
+      # URL und Port von nginx
+      APP_URL: "http://192.168.200.27"
+      IS_DOCKER: true
+      PHANTOMJS_PDF_GENERATION: 0
+      PDF_GENERATOR: snappdf
+      TRUSTED_PROXIES: '*'
+      MULTI_DB_ENABLED: 0
+      DB_HOST: in-db
+      DB_DATABASE: ninja
+      DB_USERNAME: ninja
+      DB_PASSWORD: ninja
+      DB_PORT: 3306
+      PUID: 1026
+      PGID: 100
+
+      # Cache settings
+      CACHE_DRIVER: redis
+      SESSION_DRIVER: redis
+      REDIS_HOST: in-cache
+
+      # SMTP Einstellungen des E-Mail Kontos
+      # SMTP Settings
+      MAIL_MAILER: smtp
+      MAIL_HOST: smtp.ionos.de
+      MAIL_PORT: 465
+      MAIL_USERNAME: xxx@yyyy
+      MAIL_PASSWORD: XXX
+      MAIL_ENCRYPTION: SSL
+      MAIL_FROM_ADDRESS: "invoice@example.com"
+      MAIL_FROM_NAME: "Max Crisp"
+
+      REQUIRE_HTTPS: 0
+      NINJA_ENVIRONMENT: selfhost
+
+      # Login für die erste Anmeldung.
+      # Data for initial login.
+      IN_USER_EMAIL: admin@example.com
+      IN_PASSWORD: GEHEIM
+
+    networks:
+      default:
+        ipv4_address: 192.168.200.28
+
+networks:
+  default:
+    name: mvl-200
+    external: true
