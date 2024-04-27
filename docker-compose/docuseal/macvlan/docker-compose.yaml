@@ -1,0 +1,43 @@
+version: '3'
+
+services:
+  ds-postgres:
+      container_name: docuseal_db
+      hostname: ds-postgres
+      image: postgres:15
+      volumes:
+        - '/volume3/docker/docuseal/pg_data:/var/lib/postgresql/data'
+      environment:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: postgres
+        POSTGRES_DB: docuseal
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U postgres"]
+        interval: 5s
+        timeout: 5s
+        retries: 5
+      networks:
+        default:
+          ipv4_address: 192.168.1.54
+  
+  ds-app:
+    container_name: docuseal_app
+    depends_on:
+      ds-postgres:
+        condition: service_healthy
+    image: docuseal/docuseal:latest
+    ports:
+      - 3000:3000
+    volumes:
+      - /volume3/docker/docuseal/data:/data
+    environment:
+      # FORCE_SSL: 'true'
+      DATABASE_URL: postgresql://postgres:postgres@ds-postgres:5432/docuseal
+    networks:
+      default:
+        ipv4_address: 192.168.1.55
+
+networks:
+  default:
+    name: mvl
+    external: true
