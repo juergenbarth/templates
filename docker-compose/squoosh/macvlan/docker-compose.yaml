@@ -1,0 +1,17 @@
+version: '3'
+services:
+  squoosh:
+    image: dko0/squoosh:latest
+    container_name: squoosh
+    # Not required when using macvlan:
+    # ports:
+    #   - 7701:8080
+    restart: unless-stopped
+    networks:
+      default:
+        ipv4_address: 192.168.200.17
+
+networks:
+  default:
+    name: mvl-200
+    external: true
