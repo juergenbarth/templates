@@ -1,0 +1,53 @@
+version: '3'
+
+services:
+    n8n-postgres:
+        image: postgres:14
+        container_name: n8n-postgres-demo-1
+        restart: unless-stopped
+        env_file:
+            - stack.env
+        volumes:
+            - /volume3/docker/n8n/db_storage:/var/lib/postgresql/data
+        healthcheck:
+            test: ['CMD-SHELL', 'pg_isready -h localhost -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
+            interval: 5s
+            timeout: 5s
+            retries: 10
+        networks:
+            default:
+                ipv4_address: 192.168.210.61
+                ipv6_address: fd00:0:0:210::61
+
+    n8n:
+        image: n8nio/n8n
+        container_name: n8n-demo-1
+        restart: unless-stopped
+        user: root
+        ports:
+            - 5678:5678
+        volumes:
+            - /volume3/docker/n8n/data:/home/node/.n8n
+        env_file:
+            - stack.env
+        environment:
+            - DB_TYPE=postgresdb
+            - DB_POSTGRESDB_HOST=n8n-postgres
+            - DB_POSTGRESDB_PORT=5432
+            - DB_POSTGRESDB_DATABASE=${POSTGRES_DB}
+            - DB_POSTGRESDB_USER=${POSTGRES_USER}
+            - DB_POSTGRESDB_PASSWORD=${POSTGRES_PASSWORD}
+        links:
+          - n8n-postgres
+        depends_on:
+          n8n-postgres:
+            condition: service_healthy
+        networks:
+            default:
+                ipv4_address: 192.168.210.60
+                ipv6_address: fd00:0:0:210::60
+
+networks:
+  default:
+    name: mvl-210
+    external: true
