@@ -1,0 +1,28 @@
+services:
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage-prod-1
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - HOMEPAGE_VAR_AUTHENTIK_KEY=${HOMEPAGE_VAR_AUTHENTIK_KEY}
+      - HOMEPAGE_VAR_OPNSENSE_KEY=${HOMEPAGE_VAR_OPNSENSE_KEY}
+      - HOMEPAGE_VAR_OPNSENSE_SECRET=${HOMEPAGE_VAR_OPNSENSE_SECRET}
+      - HOMEPAGE_VAR_UNIFI_USER=${HOMEPAGE_VAR_UNIFI_USER}
+      - HOMEPAGE_VAR_UNIFI_PASSWORD=${HOMEPAGE_VAR_UNIFI_PASSWORD}
+    # ports:
+    #  - 3000:3000
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+    volumes:
+      - /data/docker/homepage/config:/app/config # Make sure your local config directory exists
+      - /var/run/docker.sock:/var/run/docker.sock:ro # (optional) For docker integrations
+    # user: 1000:1000 optional, not compatibile with direct socket see https://gethomepage.dev/en/configs/docker/#using-socket-directly
+    restart: unless-stopped
+    networks:
+      default:
+        ipv4_address: 192.168.210.10
+networks:
+  default:
+    name: mvl-210
+    external: true
