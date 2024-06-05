@@ -1,0 +1,47 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:16
+    container_name: calcom-db-demo-1
+    hostname: calcom-db-demo-1
+    # user: 1026:100
+    healthcheck: # https://github.com/peter-evans/docker-compose-healthcheck
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - /volume3/docker/calcom-demo:/var/lib/postgresql/data
+    restart: on-failure:5
+    env_file:
+      - stack.env
+    networks:
+      - proxy
+
+  calcom:
+    image: calcom/cal.com:latest
+    container_name: calcom-demo-1
+    hostname: calcom-demo-1
+    healthcheck:
+      test: curl -sf http://localhost:3000 || exit 1
+    # ports:
+    #   - 3000:3000
+    restart: on-failure:5
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - stack.env
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.calcom-demo-1-http.entrypoints=web
+      - traefik.http.routers.calcom-demo-1-http.rule=Host(`calcom-demo-1.navigio.io`)
+      - traefik.http.routers.calcom-demo-1-https.entrypoints=websecure
+      - traefik.http.routers.calcom-demo-1-https.rule=Host(`calcom-demo-1.navigio.io`)
+      - traefik.http.routers.calcom-demo-1-https.tls.certresolver=httpResolver
+    networks:
+      - proxy
+
+networks:
+  proxy: 
+    external: true
