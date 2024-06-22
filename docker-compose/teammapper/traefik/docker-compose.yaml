@@ -1,0 +1,52 @@
+services:
+  teammapper_db:
+    container_name: teammapper-db-demo-1
+    image: postgres:15-alpine
+    environment_file:
+      - stack.env
+    environment:
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_PORT=${POSTGRES_PORT:-5432}
+    volumes:
+      - /volume3/docker/teammapper/pgdata:/var/lib/postgresql/data/pgdata
+    networks:
+      -proxy
+
+  teammapper:
+    container_name: teammapper-demo-1
+    image: ghcr.io/b310-digital/teammapper:latest
+    environment_file:
+      - stack.env
+    environment:
+      - MODE=${PROD_MODE:-PROD}
+      - BINDING="0.0.0.0"
+      - POSTGRES_DATABASE=${POSTGRES_DB}
+      - POSTGRES_HOST=teammapper_db
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_PORT=${POSTGRES_PORT:-5432}
+      - POSTGRES_QUERY_TIMEOUT=${POSTGRES_QUERY_TIMEOUT:-100000}
+      - POSTGRES_STATEMENT_TIMEOUT=${POSTGRES_STATEMENT_TIMEOUT:-100000}
+      - POSTGRES_SSL=false
+      - DELETE_AFTER_DAYS=${DELETE_AFTER_DAYS:-30}
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.teammapper-demo-1-http.entrypoints=web
+      - traefik.http.routers.teammapper-demo-1-http.rule=Host(`teammapper-demo.navigio.io`)
+      - traefik.http.routers.teammapper-demo-1-https.entrypoints=websecure
+      - traefik.http.routers.teammapper-demo-1-https.rule=Host(`teammapper-demo.navigio.io`)
+      - traefik.http.routers.teammapper-demo-1-https.tls.certresolver=route53
+    ports:
+      - ${APP_PORT:-80}:3000
+    depends_on:
+      - teammapper_db
+    networks:
+      -proxy
+
+networks:
+  proxy:
+    external: true
