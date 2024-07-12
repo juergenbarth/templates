@@ -1,0 +1,90 @@
+services:
+  paperless-redis:
+    image: redis
+    container_name: paperless-redis-demo-1
+    restart: always
+    volumes:
+      - /volume3/docker/paperless/redis:/usr/local/etc/redis
+    networks:
+      - proxy
+
+  paperless-db:
+    image: docker.io/library/postgres:16
+    container_name: paperless-postgres-demo-1
+    restart: always
+    volumes:
+      - /volume3/docker/paperless/pgdata-16:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: paperless
+      POSTGRES_USER: paperless
+      POSTGRES_PASSWORD: paperless
+    networks:
+      - proxy
+
+  webserver:
+    image: ghcr.io/paperless-ngx/paperless-ngx:2.11
+    container_name: paperlessngx-demo-1
+    restart: always
+    depends_on:
+      - paperless-db
+      - paperless-redis
+      - gotenberg
+      - tika
+    # ports:
+    #   - 11800:8000
+    volumes:
+      - /volume3/docker/paperless/data:/usr/src/paperless/data
+      - /volume3/docker/paperless/media:/usr/src/paperless/media
+      - /volume3/docker/paperless/export:/usr/src/paperless/export
+      - /volume3/docker/paperless/consume:/usr/src/paperless/consume
+    env_file: stacks.env
+    environment:
+      PAPERLESS_REDIS: redis://paperless-redis:6379
+      PUID: 1026
+      PGID: 100
+      PAPERLESS_DBHOST: paperless-db
+      # PAPERLESS_ADMIN_USER: admin
+      # PAPERLESS_ADMIN_PASSWORD: GEHEIM
+      PAPERLESS_TIKA_ENABLED: 1
+      PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://gotenberg:11300
+      PAPERLESS_TIKA_ENDPOINT: http://tika:11998
+      # Zusätzliche Umgebungsvariablen ab hier:
+      PAPERLESS_WORKER_TIMEOUT: 4000
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.paperlessngx-demo-1-http.entrypoints=web
+      - traefik.http.routers.paperlessngx-demo-1-http.rule=Host(`paperless-demo.navigio.io`)
+      - traefik.http.routers.paperlessngx-demo-1-https.entrypoints=websecure
+      - traefik.http.routers.paperlessngx-demo-1-https.rule=Host(`paperless-demo.navigio.io`)
+      - traefik.http.routers.paperlessngx-demo-1-wss.rule=Host(`paperless-demo.navigio.io`)
+      - traefik.http.routers.paperlessngx-demo-1-https.tls.certresolver=route53
+      - traefik.http.routers.paperlessngx-demo-1-https.service=paperlessngx-demo-1
+      - traefik.http.services.paperlessngx-demo-1.loadbalancer.server.port=8000
+    networks:
+      - proxy
+
+  gotenberg:
+    image: gotenberg/gotenberg
+    restart: always
+    container_name: gotenberg-demo-1
+    ports:
+      - 11300:3000
+    command:
+      - gotenberg
+      - --chromium-disable-javascript=true
+      - --chromium-allow-list=file:///tmp/.*
+    networks:
+      - proxy
+  
+  tika:
+    image: ghcr.io/paperless-ngx/tika
+    container_name: tika-demo-1
+    ports:
+      - 11998:9998
+    restart: always
+    networks:
+      - proxy
+    
+networks:
+  proxy:
+    external: true
