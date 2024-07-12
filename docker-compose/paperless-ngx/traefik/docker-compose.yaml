@@ -37,7 +37,7 @@ services:
       - /volume3/docker/paperless/media:/usr/src/paperless/media
       - /volume3/docker/paperless/export:/usr/src/paperless/export
       - /volume3/docker/paperless/consume:/usr/src/paperless/consume
-    env_file: stacks.env
+    env_file: stack.env
     environment:
       PAPERLESS_REDIS: redis://paperless-redis:6379
       PUID: 1026
