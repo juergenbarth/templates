@@ -22,7 +22,7 @@ services:
     environment:
       # Create the api-key:
       # docker exec -it crowdsec-prod-1 cscli bouncers add bouncer-traefik-prod-1
-      # Re-build the container after adding the key in the line below
+      # Re-build the container after adding the key in the line below 
       CROWDSEC_BOUNCER_API_KEY: create-your-own-api-key
       CROWDSEC_AGENT_HOST: crowdsec:8080
     networks:
