@@ -90,7 +90,7 @@ services:
     # https://goauthentik.io/docs/outposts/integrations/docker
     # Removing `user: root` also prevents the worker from fixing the permissions
     # on the mounted folders, so when removing this make sure the folders have the correct UID/GID
-    # (1000:1000 by default)
+    # (1000:1000 by default) 
     user: root
     volumes:
       # - /var/run/docker.sock:/var/run/docker.sock
