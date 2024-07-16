@@ -29,7 +29,7 @@ certificatesResolvers:
       # caServer: https://acme-staging-v02.api.letsencrypt.org/directory
       # For testing:
       # storage: /etc/traefik/certs/route53-acme-test.json
-      # For production:
+      # For production: 
       storage: /etc/traefik/certs/route53-acme.json
       dnsChallenge:
         provider: route53
