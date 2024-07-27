@@ -70,8 +70,6 @@ services:
       - "gotenberg"
       - "--chromium-disable-javascript=true"
       - "--chromium-allow-list=file:///tmp/.*"
-      - "--uno-listener-start-timeout=120s"
-      - "--api-timeout=600s"
 
   tika:
     image: ghcr.io/paperless-ngx/tika
