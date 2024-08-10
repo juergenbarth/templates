@@ -1,0 +1,21 @@
+services:
+  homarr:
+    container_name: homarr-demo-1
+    image: ghcr.io/ajnart/homarr:latest
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock # Optional, only if you want docker integration
+      - /volume1/docker/homarr/configs:/app/data/configs
+      - /volume1/docker/homarr/icons:/app/public/icons
+      - /volume1/docker/homarr/data:/data
+    # ports:
+    #   - '7575:7575'
+    networks:
+      default:
+        ipv4_address: 192.168.200.xxx
+        ipv4_address: fd00:0:0:200::xxx
+
+networks:
+  default:
+    name: mvl-200
+    external: true
