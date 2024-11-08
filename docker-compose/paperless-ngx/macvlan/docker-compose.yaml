@@ -46,6 +46,10 @@ services:
       PUID: 1026
       PGID: 100
       PAPERLESS_DBHOST: paperless-db
+      PAPERLESS_DBPORT: 5432
+      PAPERLESS_DBNAME: paperless
+      PAPERLESS_DBUSER: paperless
+      PAPERLESS_DBPASS: paperless
       # PAPERLESS_ADMIN_USER: admin
       # PAPERLESS_ADMIN_PASSWORD: GEHEIM
       PAPERLESS_TIKA_ENABLED: 1
