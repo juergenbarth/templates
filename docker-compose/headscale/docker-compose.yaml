@@ -1,0 +1,42 @@
+services:
+  headscale:
+    image: headscale/headscale:0.23.0
+    restart: unless-stopped
+    container_name: headscale-demo-1
+    ports:
+      - "0.0.0.0:8080:8080"
+      - "0.0.0.0:9090:9090"
+    volumes:
+      # pls change [config_path] to the fullpath of the config folder just created
+      - /volume3/docker/headscale/etc:/etc/headscale
+      - /volume3/docker/headscale/lib:/var/lib/headscale
+    command: serve
+    networks:
+      - backend
+
+  headplane:
+    image: ghcr.io/tale/headplane:0.3.9
+    container_name: headplane-demo-1
+    ports:
+      - 8888:3000
+    restart: unless-stopped
+    volumes:
+      - /volume3/docker/headscale/etc:/etc/headscale
+      - /volume3/docker/headscale/lib:/var/lib/headscale
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      COOKIE_SECRET: '8p5rgaExJuDEF67vP5avh6aHgbGOB9VF'
+      HEADSCALE_URL: http://192.168.0.10:8080
+      HEADSCALE_INTEGRATION: 'docker'
+      HEADSCALE_CONTAINER: 'headscale-demo-1'
+      DISABLE_API_KEY_LOGIN: 'true'
+      HOST: '0.0.0.0'
+      PORT: '3000'
+      COOKIE_SECURE: 'false'
+      ROOT_API_KEY: HFNjEfuJIQ.1tIow4KHKXAeABCwcPNyK3DFyAdmndwOuiP0C4I3sCY
+    networks:
+      - backend
+
+networks:
+  backend:
+    external: true
