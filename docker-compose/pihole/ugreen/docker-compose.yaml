@@ -1,0 +1,27 @@
+# More info at https://github.com/pi-hole/docker-pi-hole/ and https://docs.pi-hole.net/
+services:
+  pihole:
+    container_name: pihole-demo-1
+    image: pihole/pihole:latest
+    # For DHCP it is recommended to remove these ports and instead add: network_mode: "host"
+    # We do not need any port mappings because we are using network mode "host"
+    # ports:
+    #   - "53:53/tcp"
+    #   - "53:53/udp"
+    #   - "67:67/udp" # Only required if you are using Pi-hole as your DHCP server
+    environment:
+      DNSMASQ_LISTENING: local
+      DNSMASQ_USER: root
+      TZ: 'Europe/Berlin'
+      WEB_BIND_ADDRESS: 192.168.0.249 # The IP address of your NAS
+      WEB_PORT: 8081
+      WEBPASSWORD: changeme
+    # Volumes store your data between container upgrades
+    volumes:
+      - '/volume1/docker/pihole/etc:/etc/pihole'
+      - '/volume1/docker/pihole/dnsmasq:/etc/dnsmasq.d'
+    #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
+    cap_add:
+      - NET_ADMIN # Required if you are using Pi-hole as your DHCP server, else not needed
+    restart: unless-stopped
+    network_mode: host
