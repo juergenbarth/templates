@@ -1,0 +1,28 @@
+# Only for Pi-Hole releases >= 6
+---
+services:
+  pihole:
+    container_name: pihole-demo-1
+    image: pihole/pihole:latest
+    # -- For DHCP it is recommended to remove these ports and instead add: network_mode: "host"
+    ports:
+      - 53:53/tcp
+      - 53:53/udp
+      # --> Only required if you are using Pi-hole as your DHCP server
+      - 67:67/udp
+      # <--
+      # --> Adjust the port mapping according to the available ports on your system
+      - 8081:80
+      # -->
+    environment:
+      DNSMASQ_USER: root
+      TZ: Europe/Berlin
+      FTLCONF_webserver_api_password: changeme
+    volumes:
+      - /volume2/docker/pihole/etc:/etc/pihole
+      - /volume2/docker/pihole/dnsmasq:/etc/dnsmasq.d
+    cap_add:
+      # --> Required if you are using Pi-hole as your DHCP server, else not needed
+      - NET_ADMIN
+      # <--
+    restart: unless-stopped
