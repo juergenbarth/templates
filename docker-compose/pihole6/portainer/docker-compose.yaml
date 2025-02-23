@@ -18,6 +18,9 @@ services:
       # --> Required if you are using Pi-hole as your DHCP server, else not needed
       - NET_ADMIN
       # <--
+      # --> Required on Synology and Ugreen, otherwise there will be warnings in the logs
+      - CAP_SYS_TIME
+      # <--
     restart: unless-stopped
     networks:
       default:
