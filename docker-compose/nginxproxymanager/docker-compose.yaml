@@ -1,0 +1,38 @@
+services:
+  npm:
+    image: 'jc21/nginx-proxy-manager:2.12.3'
+    container_name: npm-demo-1
+    restart: unless-stopped
+    ports:
+      # These ports are in format <host-port>:<container-port>
+      - '80:80' # Public HTTP Port
+      - '443:443' # Public HTTPS Port
+      - '81:81' # Admin Web Port
+      # Add any other Stream port you want to expose
+      # - '21:21' # FTP
+
+    healthcheck:
+      test: ["CMD", "/usr/bin/check-health"]
+      interval: 10s
+      timeout: 3s
+
+    volumes:
+      - /volume1/docker/npm/data:/data
+      - /volume1/docker/npm/letsencrypt:/etc/letsencrypt
+
+    networks:
+      - default
+      # -->
+      # Add npm to other container networks
+      # - pihole-net
+      # <--
+
+networks:
+  default:
+    name: npm-net
+    external: true
+  # -->
+  # Add further container networks below
+  # pihole-net:
+  #   external: true
+  # <--
