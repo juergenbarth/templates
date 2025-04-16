@@ -1,0 +1,22 @@
+# When creating the nextcloud proxy host in Nginx Proxy Manager, put this code under
+# --> Advanced
+#    --> Custom Nginx Configuration
+#
+##########
+
+client_body_buffer_size 512k;
+proxy_read_timeout 86400s;
+client_max_body_size 0;
+proxy_hide_header Upgrade;
+
+location /.well-known/carddav {
+    return 301 $scheme://$host/remote.php/dav;
+}
+
+location /.well-known/caldav {
+    return 301 $scheme://$host/remote.php/dav;
+}
+
+location ^~ /.well-known {
+    return 301 $scheme://$host/index.php$uri;
+}
