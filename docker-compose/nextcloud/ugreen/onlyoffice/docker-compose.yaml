@@ -1,0 +1,30 @@
+services:
+  documentserver:
+    image: onlyoffice/documentserver
+    container_name: onlyoffice-demo-1
+    restart: unless-stopped
+    ports:
+      - 8084:80
+    extra_hosts:
+      - "nextcloud.navigio.io onlyoffice.navigio.io:172.21.0.5"
+    environment:
+      - JWT_ENABLED=true
+      - JWT_SECRET=KcWh7WiwBdvZg4W78WROjD5bC8tmbKAMMrQ1sRSMHvW6CraXBP3wwMHTwLHHT4iv
+      - JWT_HEADER=Authorization
+      - JWT_IN_BODY=true
+    volumes:
+      - /volume2/docker/onlyoffice/logs:/var/log/onlyoffice
+      - /volume2/docker/onlyoffice/data:/var/www/onlyoffice/Data
+      - /volume2/docker/onlyoffice/lib:/var/lib/onlyoffice
+      - /volume2/docker/onlyoffice/rabbitmq:/var/lib/rabbitmq
+      - /volume2/docker/onlyoffice/redis:/var/lib/redis
+      - /volume2/docker/onlyoffice/db:/var/lib/postgresql
+      - /volume2/docker/onlyoffice/fonts:/usr/share/fonts
+      - /volume2/docker/onlyoffice/public:/var/www/onlyoffice/documentserver-example/public/files
+    networks:
+      - nextcloud-net
+
+networks:
+    nextcloud-net:
+        external:
+          true
