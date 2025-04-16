@@ -1,0 +1,61 @@
+services:
+    nextcloud-db:
+        image: postgres:17
+        container_name: nextcloud-postgres-1
+        hostname: nextcloud_db
+        restart: unless-stopped
+        environment:
+          - POSTGRES_USER=nextcloud
+          - POSTGRES_PASSWORD=password
+          - POSTGRES_DB=nextcloud
+        volumes:
+          - /volume2/docker/nextcloud/db:/var/lib/postgresql/data
+        healthcheck: 
+            test: "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""
+            interval: 10s
+            timeout: 5s
+            retries: 5
+
+
+    nc:
+        image: nextcloud:31
+        container_name: nextcloud-1
+        hostname: nextcloud_app
+        restart: unless-stopped
+        links: 
+          - nextcloud-db
+        ports:
+            - 8085:80
+        extra_hosts:
+          - "nextcloud.navigio.io onlyoffice.navigio.io:172.21.0.5"
+        volumes:
+          - /volume2/docker/nextcloud/app:/var/www/html
+        environment:
+          # - OVERWRITECLIURL=nc.navigio1.synology.me
+          - TRUSTED_PROXIES=172.21.0.5 192.168.0.249
+          - OVERWRITEPROTOCOL=https
+          - POSTGRES_USER=nextcloud
+          - POSTGRES_PASSWORD=password
+          - POSTGRES_DB=nextcloud
+          - POSTGRES_HOST=nextcloud-db:5432
+          - NEXTCLOUD_TRUSTED_DOMAINS=nextcloud.navigio.io onlyoffice.navigio.io
+        healthcheck:
+            test: curl --fail http://localhost || exit 1
+            interval: 60s
+            retries: 5
+            start_period: 20s
+            timeout: 10s
+
+
+    redis:
+        image: redis:alpine
+        container_name: nextcloud-redis-1
+        hostname: nextcloud_redis
+        restart: unless-stopped
+        volumes:
+          - /volume2/docker/nextcloud/redis:/data
+
+networks:
+    default:
+        name: nextcloud-net
+        external: true
