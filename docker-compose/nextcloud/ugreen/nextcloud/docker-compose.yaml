@@ -38,6 +38,7 @@ services:
           - POSTGRES_PASSWORD=password
           - POSTGRES_DB=nextcloud
           - POSTGRES_HOST=nextcloud-db:5432
+          - REDIS_HOST=redis
           - NEXTCLOUD_TRUSTED_DOMAINS=nextcloud.navigio.io onlyoffice.navigio.io
         healthcheck:
             test: curl --fail http://localhost || exit 1
