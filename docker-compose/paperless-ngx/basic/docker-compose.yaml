@@ -1,0 +1,84 @@
+services:
+  paperless-redis:
+    image: redis
+    container_name: paperless-redis-demo-1
+    restart: always
+    volumes:
+      - /volume1/docker/paperless/redis:/usr/local/etc/redis
+    networks:
+      - paperless-net
+
+  paperless-db:
+    image: docker.io/library/postgres:16
+    container_name: paperless-postgres-demo-1
+    restart: always
+    volumes:
+      - /volume1/docker/paperless/pgdata-16:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: paperless
+      POSTGRES_USER: paperless
+      POSTGRES_PASSWORD: paperless
+    networks:
+      - paperless-net
+
+  webserver:
+    image: ghcr.io/paperless-ngx/paperless-ngx:2.17.1
+    container_name: paperlessngx-demo-1
+    restart: always
+    depends_on:
+      - paperless-db
+      - paperless-redis
+      - gotenberg
+      - tika
+    ports:
+      - 11800:8000
+    volumes:
+      - /volume1/docker/paperless/data:/usr/src/paperless/data
+      - /volume1/docker/paperless/media:/usr/src/paperless/media
+      - /volume1/docker/paperless/export:/usr/src/paperless/export
+      - /volume1/docker/paperless/consume:/usr/src/paperless/consume
+    env_file: stack.env
+    environment:
+      PAPERLESS_REDIS: redis://paperless-redis:6379
+      PUID: 1026
+      PGID: 100
+      PAPERLESS_DBHOST: paperless-db
+      PAPERLESS_DBPORT: 5432
+      PAPERLESS_DBNAME: paperless
+      PAPERLESS_DBUSER: paperless
+      PAPERLESS_DBPASS: paperless
+      PAPERLESS_ADMIN_USER: admin
+      PAPERLESS_ADMIN_PASSWORD: GEHEIM
+      PAPERLESS_TIKA_ENABLED: 1
+      PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://gotenberg:11300
+      PAPERLESS_TIKA_ENDPOINT: http://tika:11998
+      # Zusätzliche Umgebungsvariablen ab hier:
+      PAPERLESS_WORKER_TIMEOUT: 4000
+    networks:
+      - paperless-net
+
+  gotenberg:
+    image: gotenberg/gotenberg
+    restart: always
+    container_name: gotenberg-demo-1
+    ports:
+      - 11300:3000
+    command:
+      - gotenberg
+      - --chromium-disable-javascript=true
+      - --chromium-allow-list=file:///tmp/.*
+    networks:
+      - paperless-net
+  
+  tika:
+    image: ghcr.io/paperless-ngx/tika
+    container_name: tika-demo-1
+    ports:
+      - 11998:9998
+    restart: always
+    networks:
+      - paperless-net
+    
+networks:
+  paperless-net:
+    external: true
