@@ -54,6 +54,12 @@ services:
       PAPERLESS_TIKA_ENDPOINT: http://tika:11998
       # Zusätzliche Umgebungsvariablen ab hier:
       PAPERLESS_WORKER_TIMEOUT: 4000
+      # Folgende Umgebungsvariablen werden für ASN-Barcodes benötigt
+      PAPERLESS_CONSUMER_ENABLE_BARCODES: 1
+      PAPERLESS_CONSUMER_ENABLE_ASN_BARCODE: 1
+      PAPERLESS_CONSUMER_BARCODE_UPSCALE: 1.5
+      PAPERLESS_CONSUMER_BARCODE_DPI: 600
+      PAPERLESS_CONSUMER_BARCODE_SCANNER: ZXING
     networks:
       - paperless-net
 
