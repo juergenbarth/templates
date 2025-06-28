@@ -1,0 +1,175 @@
+{
+  "name": "ASN-Generator",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Label Parameters",
+        "formDescription": "Geben Sie die Parameter ein, die für die Erstellung Ihrer ASN-Etiketten verwendet werden sollen.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Start ASN",
+              "fieldType": "number",
+              "placeholder": "1"
+            },
+            {
+              "fieldLabel": "Name der Ausgabedatei",
+              "placeholder": "Dateiname ohne Pfad"
+            },
+            {
+              "fieldLabel": "Stellen",
+              "placeholder": "Anzahl Stellen"
+            },
+            {
+              "fieldLabel": "Format",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "averyL4731"
+                  },
+                  {
+                    "option": "averyL4732"
+                  },
+                  {
+                    "option": "avery5160"
+                  },
+                  {
+                    "option": "avery5161"
+                  },
+                  {
+                    "option": "avery5163"
+                  },
+                  {
+                    "option": "avery5167"
+                  },
+                  {
+                    "option": "avery5371"
+                  },
+                  {
+                    "option": "avery3657"
+                  },
+                  {
+                    "option": "herma10003"
+                  },
+                  {
+                    "option": "herma4201"
+                  },
+                  {
+                    "option": "herma4346"
+                  }
+                ]
+              }
+            },
+            {
+              "fieldLabel": "Anzahl Labels",
+              "placeholder": "189"
+            },
+            {
+              "fieldLabel": "Extra Parameter",
+              "placeholder": "--border --row-wise"
+            }
+          ]
+        },
+        "options": {
+          "ignoreBots": true
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -520,
+        20
+      ],
+      "id": "979b09cc-fe86-435b-af6d-6358a2917f6a",
+      "name": "Eingabe",
+      "webhookId": "da263bbb-d50e-42e5-b554-caab0b7fbfbd"
+    },
+    {
+      "parameters": {
+        "command": "apk add --update python3 py3-pip"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        -280,
+        20
+      ],
+      "id": "bca02da0-0ae2-4e5e-b9b4-214448dfb06a",
+      "name": "Installiere Python"
+    },
+    {
+      "parameters": {
+        "command": "python3 -m venv /asn\nsource /asn/bin/activate\npip3 install paperless-asn-qr-codes"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        20
+      ],
+      "id": "b8332aac-a8b5-49d2-9839-4cb0cd020dd7",
+      "name": "Erzeuge Umgebung"
+    },
+    {
+      "parameters": {
+        "command": "=source /asn/bin/activate\npaperless-asn-qr-codes {{ $('Eingabe').item.json['Start ASN'] ? $('Eingabe').item.json['Start ASN'] : 1 }} {{ $('Eingabe').item.json['Name der Ausgabedatei'] ? \"/asn-output/\" + $('Eingabe').item.json['Name der Ausgabedatei'] : \"/asn-output/labels.pdf\" }} --digits {{ $('Eingabe').item.json.Stellen ? $('Eingabe').item.json.Stellen : 4 }} {{ $('Eingabe').item.json.Format ? \"--format \" + $('Eingabe').item.json.Format : \"\" }} {{ $('Eingabe').item.json['Anzahl Labels'] ? \"--num-labels \" + $('Eingabe').item.json['Anzahl Labels'] : \"\" }} {{ $('Eingabe').item.json['Extra Parameter'] }}"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        160,
+        20
+      ],
+      "id": "766fb0d0-4090-4b00-8083-ef8c607b7d3d",
+      "name": "Generieren ASN"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Eingabe": {
+      "main": [
+        [
+          {
+            "node": "Installiere Python",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Installiere Python": {
+      "main": [
+        [
+          {
+            "node": "Erzeuge Umgebung",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Erzeuge Umgebung": {
+      "main": [
+        [
+          {
+            "node": "Generieren ASN",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b5d5c3b5-c8af-464d-a756-1dcbac104ad8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5ef3aa23d634f699c9079a70cd4441e326aae8e126f2d1d9e4239feb0fcbda63"
+  },
+  "id": "buLjZUnqlciaXB76",
+  "tags": []
+}
