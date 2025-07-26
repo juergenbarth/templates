@@ -50,8 +50,8 @@ services:
       PAPERLESS_ADMIN_USER: admin
       PAPERLESS_ADMIN_PASSWORD: GEHEIM
       PAPERLESS_TIKA_ENABLED: 1
-      PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://gotenberg:11300
-      PAPERLESS_TIKA_ENDPOINT: http://tika:11998
+      PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://gotenberg:3000
+      PAPERLESS_TIKA_ENDPOINT: http://tika:9998
       # Zusätzliche Umgebungsvariablen ab hier:
       PAPERLESS_WORKER_TIMEOUT: 4000
       # Folgende Umgebungsvariablen werden für ASN-Barcodes benötigt
