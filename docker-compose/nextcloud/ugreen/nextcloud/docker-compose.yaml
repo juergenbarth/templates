@@ -15,6 +15,9 @@ services:
             interval: 10s
             timeout: 5s
             retries: 5
+        networks:
+          nextcloud-net:
+            ipv4_address: 172.20.0.7
 
 
     nc:
@@ -46,6 +49,9 @@ services:
             retries: 5
             start_period: 20s
             timeout: 10s
+        networks:
+          nextcloud-net:
+            ipv4_address: 172.20.0.8
 
 
     redis:
@@ -55,6 +61,9 @@ services:
         restart: unless-stopped
         volumes:
           - /volume2/docker/nextcloud/redis:/data
+        networks:
+          nextcloud-net:
+            ipv4_address: 172.20.0.9
 
 networks:
     default:
