@@ -22,7 +22,8 @@ services:
       - /volume2/docker/onlyoffice/fonts:/usr/share/fonts
       - /volume2/docker/onlyoffice/public:/var/www/onlyoffice/documentserver-example/public/files
     networks:
-      - nextcloud-net
+      nextcloud-net:
+        ipv4_address: 172.20.0.6
 
 networks:
     nextcloud-net:
