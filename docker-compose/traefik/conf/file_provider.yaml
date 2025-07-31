@@ -1,13 +1,13 @@
 http:
     routers:
         to-pihole-1:
-            rule: "Host(`pihole-2.navigio.io`)"
+            rule: "Host(`pihole-1.navigio.io`)"
             tls:
                 certResolver: route53
-            service: pihole2
+            service: pihole1
 
     services:
-        pihole2:
+        pihole1:
             loadBalancer:
                 servers:
-                - url: http://192.168.200.9
+                - url: http://192.168.0.15
