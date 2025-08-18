@@ -30,7 +30,7 @@ services:
         ports:
             - 8085:80
         extra_hosts:
-          - "nextcloud.navigio.io onlyoffice.navigio.io:172.21.0.5"
+          - "nextcloud.navigio.io, onlyoffice.navigio.io:172.21.0.5"
         volumes:
           - /volume2/docker/nextcloud/app:/var/www/html
         environment:
