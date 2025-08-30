@@ -1,0 +1,35 @@
+services:
+  cronjob-manager:
+    image: ghcr.io/fccview/cronmaster:main
+    container_name: cronmaster
+    user: "root"
+    ports:
+      # Feel free to change port, 3000 is very common so I like to map it to something else
+      - "8090:3000"
+    environment:
+      - NODE_ENV=production
+      - DOCKER=true
+      # Legacy used to be NEXT_PUBLIC_HOST_PROJECT_DIR, this was causing issues on runtime.
+      - HOST_PROJECT_DIR=/volume1/docker/cronmaster
+      - NEXT_PUBLIC_CLOCK_UPDATE_INTERVAL=30000
+      # If docker struggles to find your crontab user, update this variable with it.
+      # Obviously replace fccview with your user - find it with: ls -asl /var/spool/cron/crontabs/
+      # For multiple users, use comma-separated values: HOST_CRONTAB_USER=fccview,root,user1,user2
+      - HOST_CRONTAB_USER=root,juergen
+    volumes:
+      # Mount Docker socket to execute commands on host
+      - /var/run/docker.sock:/var/run/docker.sock
+
+      # These are needed if you want to keep your data on the host machine and not wihin the docker volume.
+      # DO NOT change the location of ./scripts as all cronjobs that use custom scripts created via the app
+      # will target this folder (thanks to the HOST_PROJECT_DIR variable set above)
+      - /volume1/docker/cronmaster/scripts:/app/scripts
+      - /volume1/docker/cronmaster/data:/app/data
+      - /volume1/docker/cronmaster/snippets:/app/snippets
+
+    # Use host PID namespace for host command execution
+    # Run in privileged mode for nsenter access
+    pid: "host"
+    privileged: true
+    restart: unless-stopped
+    init: true
