@@ -1,0 +1,16 @@
+<odoo>
+  <record id="action_jklp_invoice_export_settings" model="ir.actions.act_window">
+    <field name="name">Rechnungs-Export</field>
+    <field name="res_model">res.config.settings</field>
+    <field name="view_mode">form</field>
+    <field name="view_id" ref="view_res_config_settings_jklp_standalone"/>
+    <field name="target">current</field>
+    <field name="context">{}</field>
+  </record>
+
+  <menuitem id="menu_jklp_invoice_export_settings"
+            name="Rechnungs-Export"
+            parent="account.account_invoicing_menu"
+            action="action_jklp_invoice_export_settings"
+            groups="base.group_system"/>
+</odoo>

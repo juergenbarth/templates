@@ -1,0 +1,35 @@
+<odoo>
+  <record id="view_res_config_settings_jklp_standalone" model="ir.ui.view">
+    <field name="name">res.config.settings.jklp.standalone.form</field>
+    <field name="model">res.config.settings</field>
+    <field name="priority" eval="99"/>
+    <field name="arch" type="xml">
+      <form string="Rechnungs-Export ins Filesystem">
+        <sheet>
+          <group string="Rechnungs-Export">
+            <field name="jklp_export_path"/>
+            <field name="jklp_on_post"/>
+            <field name="jklp_on_send"/>
+          </group>
+          <group string="Benennung &amp; Struktur">
+            <field name="jklp_subdir_pattern" placeholder="{YYYY}-{MM}"/>
+            <field name="jklp_filename_pattern" placeholder="{invoice_number}"/>
+            <field name="jklp_canary"/>
+          </group>
+
+          <!-- Überschrift statt Feld-Label -->
+          <div class="o_form_label">Platzhalter</div>
+          <p class="text-muted">
+            Verfügbar:
+            <code>{invoice_number}</code>, <code>{partner}</code>, <code>{date}</code>, <code>{id}</code> /
+            <code>{YYYY}</code>, <code>{MM}</code>, <code>{DD}</code>, <code>{company}</code>, <code>{partner}</code>
+          </p>
+        </sheet>
+        <footer>
+          <button name="execute" type="object" string="Speichern" class="btn-primary"/>
+          <button string="Abbrechen" class="btn-secondary" special="cancel"/>
+        </footer>
+      </form>
+    </field>
+  </record>
+</odoo>

@@ -1,0 +1,39 @@
+<odoo noupdate="1">
+  <data>
+    <!-- Zielpfad -->
+    <record id="jklp_param_path" model="ir.config_parameter">
+      <field name="key">jklp_invoice_fs_export.path</field>
+      <field name="value">/mnt/paperless_consume</field>
+    </record>
+
+    <!-- Schalter: beim Buchen exportieren? -->
+    <record id="jklp_param_on_post" model="ir.config_parameter">
+      <field name="key">jklp_invoice_fs_export.on_post</field>
+      <field name="value">false</field>
+    </record>
+
+    <!-- Schalter: beim Senden exportieren? -->
+    <record id="jklp_param_on_send" model="ir.config_parameter">
+      <field name="key">jklp_invoice_fs_export.on_send</field>
+      <field name="value">true</field>
+    </record>
+
+    <!-- Unterordner (leer = kein Subdir). Beispiele: {YYYY}-{MM} oder {company}/{YYYY} -->
+    <record id="jklp_param_subdir_pattern" model="ir.config_parameter">
+      <field name="key">jklp_invoice_fs_export.subdir_pattern</field>
+      <field name="value"></field>
+    </record>
+
+    <!-- Dateiname (ohne .pdf) -->
+    <record id="jklp_param_filename_pattern" model="ir.config_parameter">
+      <field name="key">jklp_invoice_fs_export.filename_pattern</field>
+      <field name="value">{invoice_number}</field>
+    </record>
+
+    <!-- Debug-Logs (Canary) -->
+    <record id="jklp_param_canary" model="ir.config_parameter">
+      <field name="key">jklp_invoice_fs_export.canary</field>
+      <field name="value">false</field>
+    </record>
+  </data>
+</odoo>
