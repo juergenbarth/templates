@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <record id="res_config_settings_view_form_xfx" model="ir.ui.view">
+    <field name="name">res.config.settings.view.form.xfx</field>
+    <field name="model">res.config.settings</field>
+    <field name="inherit_id" ref="base.res_config_settings_view_form" position="replace"/>
+    <field name="arch" type="xml">
+      <xpath expr="//sheet" position="inside">
+        <div class="app_settings_block" data-string="Factur-X Enrichment" string="Factur-X Enrichment">
+          <h2>Factur-X (CII) Enrichment – FR</h2>
+          <div class="row mt16 o_settings_container">
+            <div class="col-12 col-lg-6 o_setting_box">
+              <div class="o_setting_left_pane">
+                <field name="xfx_enable"/>
+              </div>
+              <div class="o_setting_right_pane">
+                <label for="xfx_enable" string="Enable enrichment before embedding"/>
+                <div class="text-muted">Writes BT-30 (SIRET/SIREN), BT-85 (Account Name), and fallback BT-120.</div>
+              </div>
+            </div>
+
+            <div class="col-12 col-lg-6 o_setting_box">
+              <div class="o_setting_left_pane">
+                <field name="xfx_logging_enable"/>
+              </div>
+              <div class="o_setting_right_pane">
+                <label for="xfx_logging_enable" string="Enable logging"/>
+                <div class="text-muted">Logs enrichment steps to server log based on level.</div>
+                <div class="mt8">
+                  <label for="xfx_logging_level"/>
+                  <field name="xfx_logging_level"/>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 col-lg-6 o_setting_box">
+              <div class="o_setting_left_pane">
+                <field name="xfx_attach_snapshots"/>
+              </div>
+              <div class="o_setting_right_pane">
+                <label for="xfx_attach_snapshots" string="Attach XML snapshots"/>
+                <div class="text-muted">Attach pre/post enrichment XML to the invoice chatter for debugging.</div>
+              </div>
+            </div>
+
+            <div class="col-12 col-lg-6 o_setting_box">
+              <div class="o_setting_left_pane">
+                <field name="xfx_notify_chatter"/>
+              </div>
+              <div class="o_setting_right_pane">
+                <label for="xfx_notify_chatter" string="Notify in chatter on errors"/>
+                <div class="text-muted">Posts a message on the invoice if enrichment fails.</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </xpath>
+    </field>
+  </record>
+</odoo>

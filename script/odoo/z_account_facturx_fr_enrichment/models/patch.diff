@@ -1,0 +1,52 @@
+@@
+-            if slo.find("ram:ID", namespaces=NS) is None:
+-                _sub(slo, "ID", text=legal_id)
+-                self._xfx_log("DEBUG", "[xfx] BT-30 set to %s", legal_id)
++            id_el = slo.find("ram:ID", namespaces=NS)
++            if id_el is None:
++                id_el = _sub(slo, "ID", text=legal_id)
++            # BT-30: schemeID mitgeben, damit Viewer/Validatoren mappen
++            if id_el is not None and id_el.get("schemeID") is None and legal_id:
++                if len(legal_id) == 9:
++                    id_el.set("schemeID", "SIREN")
++                elif len(legal_id) == 14:
++                    id_el.set("schemeID", "SIRET")
++            self._xfx_log("DEBUG", "[xfx] BT-30 set to %s (scheme=%s)", legal_id, id_el.get("schemeID") if id_el is not None else None)
+@@
+-        pm = root.find(".//ram:SpecifiedTradeSettlementPaymentMeans", namespaces=NS)
+-        if pm is not None:
+-            acct = pm.find("ram:PayeePartyCreditorFinancialAccount", namespaces=NS)
+-            if acct is not None and acct.find("ram:Name", namespaces=NS) is None:
++        pm = root.find(".//ram:SpecifiedTradeSettlementPaymentMeans", namespaces=NS)
++        if pm is not None:
++            acct = pm.find("ram:PayeePartyCreditorFinancialAccount", namespaces=NS)
++            # BT-85: QUBA/KoSIT erwarten i. d. R. <ram:AccountName>, nicht <ram:Name>
++            has_accname = acct is not None and acct.find("ram:AccountName", namespaces=NS) is not None
++            if acct is not None and not has_accname:
+                 acc = self.company_id.partner_id.bank_ids[:1]
+                 acc_name = (acc.acc_holder_name if acc else None) or self.company_id.name
+                 if acc_name:
+-                    _sub(acct, "Name", text=acc_name)
+-                    self._xfx_log("DEBUG", "[xfx] BT-85 set to %s", acc_name)
++                    _sub(acct, "AccountName", text=acc_name)
++                    self._xfx_log("DEBUG", "[xfx] BT-85 set to %s (AccountName)", acc_name)
+@@
+-            if bt32_val:
++            if bt32_val:
+                 existing = seller.findall("ram:SpecifiedTaxRegistration", namespaces=NS)
+                 already = False
+                 for reg in existing:
+                     idel = reg.find("ram:ID", namespaces=NS)
+-                    if idel is not None and (idel.text or '').strip() == bt32_val:
++                    if idel is not None and (idel.text or '').strip() == bt32_val:
+                         already = True
+                         break
+                 if not already:
+                     reg = _sub(seller, "SpecifiedTaxRegistration")
+                     ide = _sub(reg, "ID", text=bt32_val)
+-                    scheme = (cfg_local.get("bt32_scheme") or "").strip()
++                    # BT-32: konsistente Kennung setzen
++                    scheme = (cfg_local.get("bt32_scheme") or "").strip() or ("SIRET" if len(bt32_val) == 14 else "SIREN" if len(bt32_val) == 9 else "")
+                     if scheme:
+                         ide.set("schemeID", scheme)
+                     self._xfx_log("DEBUG", "[xfx] BT-32 set to %s (scheme=%s)", bt32_val, scheme)

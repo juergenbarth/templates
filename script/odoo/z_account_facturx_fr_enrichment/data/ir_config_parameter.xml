@@ -1,0 +1,45 @@
+<odoo>
+  <data noupdate="1">
+    <!-- Defaults -->
+    <record id="param_enable_enrichment" model="ir.config_parameter">
+      <field name="key">x_facturx_fr_enrichment.enable</field>
+      <field name="value">True</field>
+    </record>
+    <record id="param_enable_logging" model="ir.config_parameter">
+      <field name="key">x_facturx_fr_enrichment.logging_enable</field>
+      <field name="value">False</field>
+    </record>
+    <record id="param_logging_level" model="ir.config_parameter">
+      <field name="key">x_facturx_fr_enrichment.logging_level</field>
+      <field name="value">INFO</field>
+    </record>
+    <record id="param_attach_snapshots" model="ir.config_parameter">
+      <field name="key">x_facturx_fr_enrichment.attach_snapshots</field>
+      <field name="value">False</field>
+    </record>
+    <record id="param_notify_chatter" model="ir.config_parameter">
+      <field name="key">x_facturx_fr_enrichment.notify_chatter</field>
+      <field name="value">True</field>
+    </record>
+      <record id="param_bt32_enable" model="ir.config_parameter">
+      <field name="key">x_facturx_fr_enrichment.bt32_enable</field>
+      <field name="value">True</field>
+    </record>
+    <record id="param_bt32_scheme" model="ir.config_parameter">
+      <field name="key">x_facturx_fr_enrichment.bt32_scheme</field>
+      <field name="value">SIRET</field>
+    </record>
+    <record id="param_bt32_source" model="ir.config_parameter">
+      <field name="key">x_facturx_fr_enrichment.bt32_source</field>
+      <field name="value">auto</field>
+    </record>
+      <record id="param_bt121_enable" model="ir.config_parameter">
+      <field name="key">x_facturx_fr_enrichment.bt121_enable</field>
+      <field name="value">False</field>
+    </record>
+    <record id="param_bt121_code" model="ir.config_parameter">
+      <field name="key">x_facturx_fr_enrichment.bt121_code</field>
+      <field name="value"></field>
+    </record>
+  </data>
+</odoo>
