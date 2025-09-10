@@ -1,0 +1,34 @@
+services:
+  web:
+    image: odoo:18
+    container_name: odoo-demo-1
+    restart: unless-stopped
+    depends_on:
+      - odoodb
+    ports:
+      - "8089:8069"
+    volumes:
+      - /volume1/docker/odoo/web-data:/var/lib/odoo
+      - /volume1/docker/odoo/config:/etc/odoo
+      - /volume1/docker/odoo/addons:/mnt/extra-addons
+    environment:
+      - HOST=odoodb
+      - USER=odoo
+      - PASSWORD=myodoo
+      - ADDONS_PATH=/mnt/extra-addons
+
+  odoodb:
+    image: postgres:17
+    container_name: odoo-db-demo-1
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=myodoo
+      - POSTGRES_USER=odoo
+    volumes:
+      - /volume1/docker/odoo/db-data:/var/lib/postgresql/data
+
+networks:
+  default:
+    name: odoo-net
+    external: true
