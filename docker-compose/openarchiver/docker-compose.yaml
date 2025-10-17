@@ -1,0 +1,63 @@
+---
+services:
+    open-archiver:
+        image: logiclabshq/open-archiver:latest
+        container_name: open-archiver-demo-1
+        restart: unless-stopped
+        ports:
+            - '8094:3000' # Frontend
+        env_file:
+            - stack.env
+        volumes:
+            - /volume1/docker/open-archiver/data:/var/data/open-archiver
+        depends_on:
+            - postgres
+            - valkey
+            - meilisearch
+        networks:
+            - open-archiver-net
+
+    postgres:
+        image: postgres:17-alpine
+        container_name: open-archiver-db-demo-1
+        restart: unless-stopped
+        environment:
+            POSTGRES_DB: ${POSTGRES_DB:-open_archive}
+            POSTGRES_USER: ${POSTGRES_USER:-admin}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+        volumes:
+            - /volume1/docker/open-archiver/pgdata:/var/lib/postgresql/data
+        networks:
+            - open-archiver-net
+
+    valkey:
+        image: valkey/valkey:8-alpine
+        container_name: open-archiver-valkey-demo-1
+        restart: unless-stopped
+        command: valkey-server --requirepass ${REDIS_PASSWORD}
+        volumes:
+            - /volume1/docker/open-archiver/valkeydata:/data
+        networks:
+            - open-archiver-net
+
+    meilisearch:
+        image: getmeili/meilisearch:v1.15
+        container_name: open-archiver-meilisearch-demo-1
+        restart: unless-stopped
+        environment:
+            MEILI_MASTER_KEY: ${MEILI_MASTER_KEY:-aSampleMasterKey}
+        volumes:
+            - /volume1/docker/open-archiver/meilidata:/meili_data
+        networks:
+            - open-archiver-net
+
+    tika:
+        image: apache/tika:3.2.2.0-full
+        container_name: open-archiver-tika-demo-1
+        restart: unless-stopped
+        networks:
+            - open-archiver-net
+
+networks:
+    open-archiver-net:
+        external: true
