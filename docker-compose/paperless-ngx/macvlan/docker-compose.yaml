@@ -82,7 +82,7 @@ services:
       - "--chromium-allow-list=file:///tmp/.*"
 
   tika:
-    image: ghcr.io/paperless-ngx/tika
+    image: docker.io/apache/tika:latest
     container_name: tika-demo-1
     ports:
       - 9998:9998
