@@ -77,7 +77,7 @@ services:
       - paperless-net
   
   tika:
-    image: ghcr.io/paperless-ngx/tika
+    image: docker.io/apache/tika:latest
     container_name: tika-demo-1
     ports:
       - 11998:9998
