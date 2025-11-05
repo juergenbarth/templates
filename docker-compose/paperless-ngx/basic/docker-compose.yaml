@@ -22,7 +22,7 @@ services:
       - paperless-net
 
   webserver:
-    image: ghcr.io/paperless-ngx/paperless-ngx:2.17.1
+    image: ghcr.io/paperless-ngx/paperless-ngx:2.19.4
     container_name: paperlessngx-demo-1
     restart: always
     depends_on:
