@@ -25,7 +25,7 @@ services:
         ipv4_address: 192.168.200.34
 
   webserver:
-    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    image: ghcr.io/paperless-ngx/paperless-ngx:2.19.4
     container_name: paperlessngx-demo-1
     restart: always
     depends_on:
