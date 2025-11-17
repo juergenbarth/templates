@@ -3,6 +3,8 @@ services:
     container_name: homarr-demo-1
     image: ghcr.io/ajnart/homarr:latest
     restart: unless-stopped
+    environment:
+      - SECRET_ENCRYPTION_KEY=1fc4845e28514028a097b26a5aba9eb31bad1de770151de611ff8379f283b307
     labels:
       - traefik.enable=true
       - traefik.http.routers.homarr-demo-1-http.entrypoints=web
