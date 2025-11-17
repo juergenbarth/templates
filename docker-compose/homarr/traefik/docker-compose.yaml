@@ -15,9 +15,9 @@ services:
       - traefik.http.routers.homarr-demo-1-https.tls.certresolver=route53
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock # Optional, only if you want docker integration
-      - ./homarr/configs:/app/data/configs
-      - ./homarr/icons:/app/public/icons
-      - ./homarr/data:/data
+      - # ./homarr/configs:/app/data/configs
+      - # ./homarr/icons:/app/public/icons
+      - ./homarr/data:/appdata
     ports:
       - '7575:7575'
     networks:
