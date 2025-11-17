@@ -3,6 +3,8 @@ services:
     container_name: homarr-demo-1
     image: ghcr.io/ajnart/homarr:latest
     restart: unless-stopped
+    environment:
+      - SECRET_ENCRYPTION_KEY=f4c32cff4504f46577eb1e122789ce7a77ac0405788ad8e0a36d8c38ef52c6a3
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock # Optional, only if you want docker integration
       - /volume1/docker/homarr/configs:/app/data/configs
