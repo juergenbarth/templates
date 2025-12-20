@@ -1,0 +1,15 @@
+services:
+    it-tools:
+        container_name: it-tools-prod
+        restart: unless-stopped
+        # ports:
+        #     - 8083:80
+        image: ghcr.io/corentinth/it-tools:latest
+        networks:
+            default:
+              ipv4_address: 192.168.0.33
+
+networks:
+    default:
+      name: mvl
+      external: true
