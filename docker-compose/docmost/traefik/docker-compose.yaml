@@ -1,0 +1,71 @@
+---
+services:
+  docmost:
+    image: docmost/docmost:latest
+    container_name: docmost-demo-1
+    depends_on:
+      - db
+      - redis
+    ports:
+      - "3000:3000"
+    environment:
+      - APP_URL=${APP_URL}
+      - PORT=${PORT}
+      - APP_SECRET=${APP_SECRET}
+      - JWT_TOKEN_EXPIRES_IN=30d
+      - DATABASE_URL=//${POSTGRES_USER}:${POSTGRES_PASSWORD}@docmost-db-demo-1:5432/${POSTGRES_DB}?schema=public
+      - REDIS_URL=redis://redis:6379
+      - STORAGE_DRIVER=local
+      - MAIL_DRIVER=${MAIL_DRIVER}
+      - MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS}
+      - MAIL_FROM_NAME=${MAIL_FROM_NAME}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USERNAME=${SMTP_USERNAME}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - SMTP_SECURE=${SMTP_SECURE}
+      - SMTP_IGNORETLS=${SMTP_IGNORETLS}
+      - DRAWIO_URL=
+      - DISABLE_TELEMETRY=${DISABLE_TELEMETRY}
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.docmost-demo-1-http.entrypoints=web
+      - traefik.http.routers.docmost-demo-1-http.rule=Host(`docmost.example.com`)
+      - traefik.http.routers.docmost-demo-1-https.entrypoints=websecure
+      - traefik.http.routers.docmost-demo-1-https.rule=Host(`docmost.example.com`)
+      - traefik.http.routers.docmost-demo-1-https.tls=true
+      - traefik.http.routers.docmost-demo-1-https.tls.certresolver=route53
+    restart: unless-stopped
+    volumes:
+      - /volume2/docker/docmost/app-data:/app/data/storage
+    networks:
+      - frontend
+      - backend
+
+  db:
+    image: postgres:17-alpine
+    container_name: docmost-db-demo-1
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    restart: unless-stopped
+    volumes:
+      - /volume2/docker/docmost/db-data:/var/lib/postgresql/data
+    networks:
+      - backend
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: docmost-redis-demo-1
+    restart: unless-stopped
+    volumes:
+      - /volume2/docker/docmost/redis-data:/data
+    networks:
+      - backend
+
+networks:
+  frontend:
+    external: true
+  backend:
+    external: true
