@@ -8,6 +8,8 @@ services:
       - redis
     ports:
       - "3000:3000"
+    env_file:
+      - stack.env
     environment:
       - APP_URL=${APP_URL}
       - PORT=${PORT}
@@ -45,6 +47,8 @@ services:
   db:
     image: postgres:17-alpine
     container_name: docmost-db-demo-1
+    env_file:
+      - stack.env
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
