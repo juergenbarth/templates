@@ -1,7 +1,7 @@
 ---
 services:
   docmost:
-    image: docmost/docmost:latest
+    image: docmost/docmost:latest # --- for production use pin to a specific release!
     container_name: docmost-demo-1
     depends_on:
       - db
