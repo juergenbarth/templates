@@ -15,7 +15,7 @@ services:
       - PORT=${PORT}
       - APP_SECRET=${APP_SECRET}
       - JWT_TOKEN_EXPIRES_IN=30d
-      - DATABASE_URL=//${POSTGRES_USER}:${POSTGRES_PASSWORD}@docmost-db-demo-1:5432/${POSTGRES_DB}?schema=public
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@docmost-db-demo-1:5432/${POSTGRES_DB}?schema=public
       - REDIS_URL=redis://redis:6379
       - STORAGE_DRIVER=local
       - MAIL_DRIVER=${MAIL_DRIVER}
