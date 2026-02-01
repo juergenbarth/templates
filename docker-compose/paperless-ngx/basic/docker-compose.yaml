@@ -9,7 +9,7 @@ services:
       - paperless-net
 
   paperless-db:
-    image: docker.io/library/postgres:16
+    image: docker.io/library/postgres:17
     container_name: paperless-postgres-demo-1
     restart: always
     volumes:
@@ -22,7 +22,7 @@ services:
       - paperless-net
 
   webserver:
-    image: ghcr.io/paperless-ngx/paperless-ngx:2.19.4
+    image: ghcr.io/paperless-ngx/paperless-ngx:2.20.6
     container_name: paperlessngx-demo-1
     restart: always
     depends_on:
