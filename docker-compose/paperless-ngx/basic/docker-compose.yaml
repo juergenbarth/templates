@@ -13,7 +13,7 @@ services:
     container_name: paperless-postgres-demo-1
     restart: always
     volumes:
-      - /volume1/docker/paperless/pgdata-17:/var/lib/postgresql/data
+      - /volume1/docker/paperless/pgdata:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: paperless
       POSTGRES_USER: paperless
