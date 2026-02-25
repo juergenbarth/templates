@@ -60,7 +60,7 @@ services:
         hostname: nextcloud_redis
         restart: unless-stopped
         volumes:
-          - /volume1/docker/nextcloud/redis:/data
+          - /volume2/docker/nextcloud/redis:/data
         networks:
           nextcloud-net:
             ipv4_address: 172.20.0.9
