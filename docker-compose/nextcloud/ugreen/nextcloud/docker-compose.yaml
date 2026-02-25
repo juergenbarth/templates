@@ -6,10 +6,10 @@ services:
         restart: unless-stopped
         environment:
           - POSTGRES_USER=nextcloud
-          - POSTGRES_PASSWORD=xxx
+          - POSTGRES_PASSWORD=password
           - POSTGRES_DB=nextcloud
         volumes:
-          - /volume1/docker/nextcloud/db:/var/lib/postgresql/data
+          - /volume2/docker/nextcloud/db:/var/lib/postgresql/data
         healthcheck:
             test: "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""
             interval: 10s
@@ -30,19 +30,19 @@ services:
         ports:
             - 8085:80
         extra_hosts:
-          - "nextcloud.schorbus.freeddns.org:172.20.0.5"
+          - "nextcloud.navigio.io, onlyoffice.navigio.io:172.20.0.5"
         volumes:
-          - /volume1/docker/nextcloud/app:/var/www/html
+          - /volume2/docker/nextcloud/app:/var/www/html
         environment:
           # - OVERWRITECLIURL=nc.navigio1.synology.me
-          - TRUSTED_PROXIES=172.20.0.5 192.168.2.132
+          - TRUSTED_PROXIES=172.20.0.5 192.168.0.249
           - OVERWRITEPROTOCOL=https
           - POSTGRES_USER=nextcloud
-          - POSTGRES_PASSWORD=xxx
+          - POSTGRES_PASSWORD=password
           - POSTGRES_DB=nextcloud
           - POSTGRES_HOST=nextcloud-db:5432
           - REDIS_HOST=nextcloud_redis
-          - NEXTCLOUD_TRUSTED_DOMAINS=nextcloud.schorbus.freeddns.org
+          - NEXTCLOUD_TRUSTED_DOMAINS=nextcloud.navigio.io onlyoffice.navigio.io
         healthcheck:
             test: curl --fail http://localhost || exit 1
             interval: 60s
