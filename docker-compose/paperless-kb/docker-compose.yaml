@@ -11,7 +11,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - /volume1/docker/paperles-ni/open-webui/data:/app/backend/data
+      - /volume1/docker/paperless-ni/open-webui/data:/app/backend/data
 
   # ollama service for local LLMs
   ollama:
@@ -20,8 +20,8 @@ services:
     env_file:
       - .env
     volumes:
-      - /volume1/docker/paperles-ni/ollama/data/:/root/.ollama
-      - /volume1/docker/paperles-ni/ollama/models:/ollama-models
+      - /volume1/docker/paperless-ni/ollama/data/:/root/.ollama
+      - /volume1/docker/paperless-ni/ollama/models:/ollama-models
     restart: unless-stopped
 
   # paperless-ai service
@@ -36,7 +36,7 @@ services:
     env_file:
       - .env
     volumes:
-      - /volume1/docker/paperles-ni/paperless-ai/data:/app/data
+      - /volume1/docker/paperless-ni/paperless-ai/data:/app/data
   
 
   # paperless-gpt service
@@ -51,4 +51,4 @@ services:
     env_file:
       - .env
     volumes:
-      - /volume1/docker/paperles-ni/paperless-gpt/prompts:/app/prompts # Mount the prompts directory
+      - /volume1/docker/paperless-ni/paperless-gpt/prompts:/app/prompts # Mount the prompts directory
