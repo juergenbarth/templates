@@ -1,0 +1,54 @@
+services:
+  # open-webui service for LLM interaction
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:latest
+    container_name: open-webui
+    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      - ollama
+    ports:
+      - "8080:8080"
+    volumes:
+      - /volume1/docker/paperles-ni/open-webui/data:/app/backend/data
+
+  # ollama service for local LLMs
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    env_file:
+      - .env
+    volumes:
+      - /volume1/docker/paperles-ni/ollama/data/:/root/.ollama
+      - /volume1/docker/paperles-ni/ollama/models:/ollama-models
+    restart: unless-stopped
+
+  # paperless-ai service
+  paperless-ai:
+    image: clusterzx/paperless-ai:latest
+    container_name: paperless-ai
+    restart: unless-stopped
+    depends_on:
+      - ollama
+    ports:
+      - "3001:3000"
+    env_file:
+      - .env
+    volumes:
+      - /volume1/docker/paperles-ni/paperless-ai/data:/app/data
+  
+
+  # paperless-gpt service
+  paperless-gpt:
+    image: icereed/paperless-gpt:latest
+    container_name: paperless-gpt
+    restart: unless-stopped
+    depends_on:
+      - ollama
+    ports:
+      - "3002:8080"
+    env_file:
+      - .env
+    volumes:
+      - /volume1/docker/paperles-ni/paperless-gpt/prompts:/app/prompts # Mount the prompts directory
