@@ -1,0 +1,26 @@
+services:
+    stalwart:
+        container_name: stalwart-demo-1
+        restart: unless-stopped
+        ports:
+            - 443:443
+            - 8080:8080
+            - 25:25
+            - 587:587
+            - 465:465
+            - 143:143
+            - 993:993
+            - 110:110
+            - 995:995
+            - 4190:4190
+        environment:
+            - STALWART_PUBLIC_URL=https://mailtest.jklp.io
+        volumes:
+            - /data/docker/stalwart/etc:/etc/stalwart
+            - /data/docker/stalwart/data:/var/lib/stalwart
+        image: stalwartlabs/stalwart:v0.16
+
+networks:
+  default:
+    name: stalwart-net
+    external: true
