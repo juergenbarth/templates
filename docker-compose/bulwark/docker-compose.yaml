@@ -1,0 +1,39 @@
+services:
+  webmail:
+    image: ghcr.io/bulwarkmail/webmail:latest
+    container_name: bulwark-demo-1
+    ports:
+      - "3001:3000"
+    environment:
+      - HOSTNAME=0.0.0.0 # Use "::" for IPv6
+      - PORT=3000
+    # env_file:
+    #   - .env.local
+    volumes:
+      # Encrypted user settings (SETTINGS_DATA_DIR).
+      - /data/docker/bulwark/settings:/app/data/settings
+      # Admin configuration: config.json, policy.json, admin.json (passwordHash),
+      # plugins, themes, branding uploads (ADMIN_CONFIG_DIR). Can be mounted
+      # read-only after running the setup wizard - append `:ro` to lock it.
+      - /data/docker/bulwark/admin:/app/data/admin
+      # Admin runtime state: admin-state.json (login timestamps), audit.log,
+      # setup token (ADMIN_STATE_DIR). Always read-write.
+      - /data/docker/bulwark/admin-state:/app/data/admin-state
+      # Anonymous telemetry: instance id, consent state, login HMACs (TELEMETRY_DATA_DIR).
+      # Persisting this preserves the admin's consent choice and stable instance id across upgrades.
+      - /data/docker/bulwark/telemetry:/app/data/telemetry
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--no-verbose",
+          "--tries=1",
+          "--spider",
+          "http://127.0.0.1:3000/api/health",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
