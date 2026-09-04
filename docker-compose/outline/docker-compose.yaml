@@ -37,7 +37,7 @@ services:
     restart: unless-stopped
     expose:
       - "5432"
-    volumesq:
+    volumes:
       - /data/docker/outline/db-data:/var/lib/postgresql
     healthcheck:
       test: ["CMD", "pg_isready", "-d", "outline", "-U", "user"]
