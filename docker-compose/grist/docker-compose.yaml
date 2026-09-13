@@ -1,0 +1,71 @@
+services:
+  grist:
+    image: gristlabs/grist:latest
+    container_name: grist-prod-1
+    restart: unless-stopped
+    # When using Portainer, remove the comment sign from the following line:
+    # env_file: stack.env
+    environment:
+      - HTTPS=external
+      - GRIST_HOST=0.0.0.0
+      # Postgres database setup
+      - TYPEORM_DATABASE=grist
+      - TYPEORM_USERNAME=grist
+      - TYPEORM_HOST=grist-db
+      - TYPEORM_LOGGING=false
+      - TYPEORM_PASSWORD=${DATABASE_PASSWORD}
+      - TYPEORM_PORT=5432
+      - TYPEORM_TYPE=postgres
+
+      # Redis setup
+      - REDIS_URL=redis://grist-redis
+
+      # MinIO setup. This requires the bucket set up on the MinIO instance with versioning enabled.
+      # - GRIST_DOCS_MINIO_ACCESS_KEY=grist
+      # - GRIST_DOCS_MINIO_SECRET_KEY=${MINIO_PASSWORD}
+      # - GRIST_DOCS_MINIO_USE_SSL=0
+      # - GRIST_DOCS_MINIO_BUCKET=grist-docs
+      # - GRIST_DOCS_MINIO_ENDPOINT=grist-minio
+      # - GRIST_DOCS_MINIO_PORT=9000
+    volumes:
+      # Where to store persistent data, such as documents.
+      - ${PERSIST_DIR}/grist-data:/persist
+    ports:
+      - 8484:8484
+    depends_on:
+      - grist-db
+      - grist-redis
+      # - grist-minio
+    networks:
+      - grist-net
+
+  grist-db:
+    image: postgres:18
+    container_name: grist-db-prod-1
+    restart: unless-stopped
+    # When using Portainer, remove the comment sign from the following line:
+    # env_file: stack.env
+    environment:
+        - POSTGRES_DB=grist
+        - POSTGRES_USER=grist
+        - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+    volumes:
+      - ${PERSIST_DIR}/db-data:/var/lib/postgresql
+    networks:
+      - grist-net
+
+
+  grist-redis:
+    image: redis:alpine
+    container_name: grist-redis-prod-1
+    restart: unless-stopped
+    # When using Portainer, remove the comment sign from the following line:
+    # env_file: stack.env
+    volumes:
+      - ${PERSIST_DIR}/redis-data:/data
+    networks:
+      - grist-net
+
+networks:
+  grist-net:
+    external: true
